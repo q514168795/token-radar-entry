@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar &middot; pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#board">Skip to the board</a>
+<header class="top">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    <div>
+      <h1>Token Radar</h1>
+      <p class="sub" id="asof"></p>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab is-on" data-view="board" role="tab">Pre-token board</button>
+    <button class="tab" data-view="live" role="tab">Live tokens</button>
+    <button class="tab" data-view="model" role="tab">Model</button>
+  </nav>
+</header>
+
+<section class="strip" id="strip" aria-label="Board summary"></section>
+
+<section class="controls" id="controls">
+  <label class="field grow">
+    <span>Search</span>
+    <input id="q" type="search" placeholder="name, slug, category or chain" autocomplete="off">
+  </label>
+  <label class="field">
+    <span>Category</span>
+    <select id="cat"><option value="">All</option></select>
+  </label>
+  <label class="field">
+    <span>Chain</span>
+    <select id="chain"><option value="">All</option></select>
+  </label>
+  <label class="field">
+    <span>Sort by</span>
+    <select id="sort">
+      <option value="rank">Rank</option>
+      <option value="implied_value_usd">Implied value</option>
+      <option value="tvl_usd">TVL</option>
+      <option value="change_7d">7-day change</option>
+      <option value="age_days">Age</option>
+      <option value="name">Name</option>
+    </select>
+  </label>
+  <label class="field">
+    <span>Min TVL</span>
+    <select id="floor">
+      <option value="0">Any</option>
+      <option value="10000000">$10M</option>
+      <option value="50000000">$50M</option>
+      <option value="100000000">$100M</option>
+      <option value="500000000">$500M</option>
+    </select>
+  </label>
+</section>
+
+<main id="board" tabindex="-1" aria-busy="true" aria-live="polite"></main>
+
+<aside id="detail" class="detail" aria-hidden="true" aria-label="Protocol detail"></aside>
+<div id="scrim" class="scrim" hidden></div>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
