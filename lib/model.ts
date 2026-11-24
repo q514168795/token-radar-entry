@@ -64,7 +64,7 @@ export const MODEL: ModelConstants = {
 export const MODEL_VERSION = 'radar-2';
 
 /** Pre-token protocols below the watchlist floor that join the board, by TVL. */
-export const EARLY_ROWS = 180;
+export const EARLY_ROWS = 260;
 
 /** Live-token protocols the page's second view carries, by market cap. */
 const DAY_MS = 86_400_000;
@@ -102,14 +102,30 @@ export function impliedValue(p: SnapshotProtocol, asOf: string, model: ModelCons
 
 const VERSIONED = /\s(V\d+(\.\d+)?|v\d+(\.\d+)?|\d+\.\d+)$/;
 
+/** DefiLlama's product categories the house reads as a wrapped or bridged stand-in for another token. */
+const DERIVED = new Set(['Bridge', 'Canonical Bridge', 'Liquid Staking', 'Liquid Restaking', 'Restaked BTC', 'CEX']);
+
+/** Exchange names whose in-house product is not a protocol waiting on its own launch. */
+const EXCHANGE = /^(Binance|Coinbase|Bybit|Kraken|Bitget|OKX|Bitfinex|Gemini)\b/;
+
+/** Whether the name marks a wrapped or staked stand-in rather than a protocol of its own. */
+const WRAPPED = /\b(wrapped|staked|staking)\b/i;
+
 /** Whether a protocol records no token at all. */
 export function isPreToken(p: SnapshotProtocol): boolean {
   return p.mcap_usd === null && p.gecko_id === null && p.symbol === null;
 }
 
-/** Whether a protocol is one the board may rank: pre-token, not an exchange, not a versioned pool. */
+/**
+ * Whether a protocol is one this radar ranks: it records no token of its own, it is not a versioned
+ * pool of another protocol, and it is not a wrapped, staked, bridged or exchange product — those are
+ * a token that already trades wearing another chain's clothes, not a launch still to come.
+ */
 export function isRankable(p: SnapshotProtocol): boolean {
-  return isPreToken(p) && p.category !== 'CEX' && !VERSIONED.test(p.name);
+  if (!isPreToken(p)) return false;
+  if (p.category !== null && DERIVED.has(p.category)) return false;
+  if (VERSIONED.test(p.name) || WRAPPED.test(p.name) || EXCHANGE.test(p.name)) return false;
+  return true;
 }
 
 export interface FarmStep {
